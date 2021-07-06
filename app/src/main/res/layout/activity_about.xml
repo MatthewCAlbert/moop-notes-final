@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AboutActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="15dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_marginTop="20dp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginVertical="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MOOP Notes"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MOOP Notes is a cloud-based notes application.\n\nIt requires good internet connection and server turned on at the same time."
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NO Offline Capability Yet !"
+            android:textStyle="bold"
+            android:textColor="#f00"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:text="You can check if the server down or not here: "
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:autoLink="web"
+            android:text="https://moop.hexalogi.cyou/api/v1"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Members"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="20dp"
+            />
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            >
+            <TableRow>
+                <TextView
+                    android:layout_column="1"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:layout_marginRight="10dp"
+                    android:text="•"/>
+                <TextView
+                    android:layout_column="2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:text="Adrianto Wijaya - 2301849441"></TextView>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_column="1"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:text="•"/>
+                <TextView
+                    android:layout_column="2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:text="Herlangga Karteja - 2301849050"></TextView>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_column="1"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:text="•"/>
+                <TextView
+                    android:layout_column="2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:text="Jose Anthony - 2301874336"></TextView>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_column="1"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:text="•"/>
+                <TextView
+                    android:layout_column="2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:text="Matthew Christopher Albert - 2301848981"></TextView>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_column="1"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:text="•"/>
+                <TextView
+                    android:layout_column="2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:text="Pascal Sihombing - 2301888732"></TextView>
+            </TableRow>
+        </TableLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

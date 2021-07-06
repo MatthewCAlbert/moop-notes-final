@@ -1,6 +1,7 @@
 package com.example.moopnotes.rest;
 
 import com.example.moopnotes.model.AuthCheck;
+import com.example.moopnotes.model.BasicApi;
 import com.example.moopnotes.model.DeleteNote;
 import com.example.moopnotes.model.EditNote;
 import com.example.moopnotes.model.GetNoteList;
@@ -35,7 +36,7 @@ public interface ApiInterface {
 
     @PUT("user/change-password")
     @Headers({"Content-Type: application/json"})
-    Call<AuthCheck> changePassword(@Header("Authorization") String auth, @Body JsonObject body);
+    Call<Login> changePassword(@Header("Authorization") String auth, @Body JsonObject body);
 
     // Notes Routes
     @GET("notes/all")

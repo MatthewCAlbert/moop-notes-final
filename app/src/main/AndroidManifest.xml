@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MOOPNotes">
-        <activity android:name=".AccountActivity"></activity>
+        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".AccountActivity" />
         <activity android:name=".NoteListActivity" />
         <activity android:name=".NoteCreateActivity" />
         <activity android:name=".NoteEditActivity" />

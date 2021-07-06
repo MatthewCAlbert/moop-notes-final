@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.moopnotes.adapter.NoteAdapter;
@@ -32,6 +33,7 @@ public class NoteListActivity extends AppCompatActivity {
     Button btIns, logoutBtn;
     ApiInterface mApiInterface;
     SessionManager sessionManager;
+    private TextView emptyView;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -54,6 +56,7 @@ public class NoteListActivity extends AppCompatActivity {
             }
         });
 
+        emptyView = (TextView) findViewById(R.id.emptyView);
         mRecyclerView = (RecyclerView) findViewById(R.id.noteListRecyclerView);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -88,6 +91,8 @@ public class NoteListActivity extends AppCompatActivity {
             finish();
         }else if( id == R.id.syncButton ){
             this.refresh();
+        }else if( id == R.id.aboutButton ){
+            startActivity(new Intent(NoteListActivity.this, AboutActivity.class));
         }else if( id == R.id.accountButton ){
             startActivity(new Intent(NoteListActivity.this, AccountActivity.class));
         }
@@ -104,12 +109,26 @@ public class NoteListActivity extends AppCompatActivity {
                     response) {
                 if( response.body() != null && response.isSuccessful() ){
                     List<Note> noteList = response.body().getData();
+                    int noteLength = noteList.size();
                     Log.d("Retrofit Get", "Jumlah data Kontak: " +
-                            String.valueOf(noteList.size()));
-                    mAdapter = new NoteAdapter(noteList);
-                    mRecyclerView.setAdapter(mAdapter);
+                            String.valueOf(noteLength));
+
+                    if( noteLength > 0 ){
+                        mAdapter = new NoteAdapter(noteList);
+                        mRecyclerView.setAdapter(mAdapter);
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        emptyView.setVisibility(View.GONE);
+                    }else{
+                        mRecyclerView.setVisibility(View.GONE);
+                        emptyView.setText("No Notes Available");
+                        emptyView.setVisibility(View.VISIBLE);
+                    }
+
                 }else{
                     Toast.makeText(NoteListActivity.this, "Failed to fetch", Toast.LENGTH_SHORT).show();
+                    mRecyclerView.setVisibility(View.GONE);
+                    emptyView.setText("Fetch Failed");
+                    emptyView.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -117,6 +136,9 @@ public class NoteListActivity extends AppCompatActivity {
             public void onFailure(Call<GetNoteList> call, Throwable t) {
                 Log.e("Retrofit Get", t.toString());
                 Toast.makeText(NoteListActivity.this, "Failed to fetch", Toast.LENGTH_SHORT).show();
+                mRecyclerView.setVisibility(View.GONE);
+                emptyView.setText("Fetch Error");
+                emptyView.setVisibility(View.VISIBLE);
             }
         });
     }

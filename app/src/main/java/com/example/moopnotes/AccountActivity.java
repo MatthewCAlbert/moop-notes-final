@@ -13,8 +13,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.moopnotes.model.BasicApi;
+import com.example.moopnotes.model.EditNote;
 import com.example.moopnotes.model.Login;
 import com.example.moopnotes.model.LoginData;
+import com.example.moopnotes.model.Note;
 import com.example.moopnotes.model.User;
 import com.example.moopnotes.rest.ApiClient;
 import com.example.moopnotes.rest.ApiInterface;
@@ -101,7 +104,36 @@ public class AccountActivity extends AppCompatActivity {
 
             String token = sessionManager.getToken();
 
-            // call API
+            Call<Login> changePasswordCall = apiInterface.changePassword(token, paramObject);
+            changePasswordCall.enqueue(new Callback<Login>() {
+                @Override
+                public void onResponse(Call<Login> call, Response<Login> response) {
+                    if(response.body() != null && response.isSuccessful() ){
+                        String token = response.body().getToken();
+                        String expiresIn = response.body().getExpiresIn();
+                        User user = response.body().getUser();
+
+                        sessionManager = new SessionManager(AccountActivity.this);
+                        LoginData loginData = new LoginData();
+                        loginData.setUsername(user.getUsername());
+                        loginData.setId(user.getId());
+                        loginData.setToken(token);
+                        loginData.setCreatedAt(user.getCreatedAt());
+
+                        sessionManager.createLoginSession(loginData);
+
+                        Toast.makeText(AccountActivity.this, "Change Password Success!", Toast.LENGTH_SHORT).show();
+
+                        finish();
+                    }else{
+                        Toast.makeText(AccountActivity.this, "Change Password Failed!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override
+                public void onFailure(Call<Login> call, Throwable t) {
+                    Toast.makeText(AccountActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         } catch (JsonIOException e) {
             e.printStackTrace();
         }

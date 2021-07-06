@@ -9,6 +9,10 @@
         android:id="@+id/accountButton"
         app:showAsAction="never"
         />
+    <item android:title="About"
+        android:id="@+id/aboutButton"
+        app:showAsAction="never"
+        />
     <item android:title="Logout"
         android:id="@+id/logoutButton"
         app:showAsAction="never"
