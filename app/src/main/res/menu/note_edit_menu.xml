@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/saveButton"
+        android:title="SAVE"
+        app:showAsAction="always"
+        app:materialIcon="content_save"
+        app:materialIconSize="24dp"
+        app:materialIconColor="#fff"
+        android:background="@android:color/darker_gray"
+        />
+    <item
+        android:id="@+id/syncButton"
+        android:title="SYNC"
+        app:showAsAction="always"
+        app:materialIcon="sync"
+        app:materialIconSize="24dp"
+        app:materialIconColor="#fff"
+        android:background="@android:color/darker_gray"
+        />
+    <item
+        android:id="@+id/deleteButton"
+        android:title="DELETE"
+        app:showAsAction="always"
+        app:materialIcon="delete"
+        app:materialIconSize="24dp"
+        app:materialIconColor="#fff"
+        android:background="@android:color/darker_gray"
+        />
+</menu>
