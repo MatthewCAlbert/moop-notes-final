@@ -7,13 +7,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,9 +24,6 @@ import com.example.moopnotes.rest.ApiClient;
 import com.example.moopnotes.rest.ApiInterface;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
-
-import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
-import net.steamcrafted.materialiconlib.MaterialMenuInflater;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,6 +38,10 @@ public class NoteEditActivity extends AppCompatActivity {
     private boolean autoSave = false;
     private boolean isSaved = true;
     private SwipeRefreshLayout listMenuRefresh;
+    private EditText titleInput;
+    private EditText contentInput;
+    private TextView noteUpdatedAt;
+    private TextView conflictWarningText;
     ApiInterface apiInterface;
     SessionManager sessionManager;
 
@@ -52,9 +52,10 @@ public class NoteEditActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(NoteEditActivity.this);
 
-        EditText titleInput = findViewById(R.id.inputTitle);
-        EditText contentInput = findViewById(R.id.inputContent);
-        TextView noteUpdatedAt = findViewById(R.id.noteUpdatedAt);
+        this.titleInput = findViewById(R.id.inputTitle);
+        this.contentInput = findViewById(R.id.inputContent);
+        this.noteUpdatedAt = findViewById(R.id.noteUpdatedAt);
+        this.conflictWarningText = findViewById(R.id.conflictWarning);
 
         Intent intent = getIntent();
         this.noteId = intent.getStringExtra("id");
@@ -64,9 +65,9 @@ public class NoteEditActivity extends AppCompatActivity {
 
         updatedAt = updatedAt != null ? convertDate(updatedAt) : "never";
 
-        titleInput.setText(title);
-        contentInput.setText(content);
-        noteUpdatedAt.setText(updatedAt);
+        this.titleInput.setText(title);
+        this.contentInput.setText(content);
+        this.noteUpdatedAt.setText(updatedAt);
 
         // calling the action bar
         ActionBar actionBar = getSupportActionBar();
@@ -77,7 +78,7 @@ public class NoteEditActivity extends AppCompatActivity {
         setTitle("Edit Note");
 
         // Add Input Listener
-        titleInput.addTextChangedListener(new TextWatcher() {
+        this.titleInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 NoteEditActivity.this.isSaved = false;
@@ -96,7 +97,7 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
-        contentInput.addTextChangedListener(new TextWatcher() {
+        this.contentInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 NoteEditActivity.this.isSaved = false;
@@ -132,7 +133,7 @@ public class NoteEditActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // R.menu.mymenu is a reference to an xml file named mymenu.xml which should be inside your res/menu directory.
         // If you don't have res/menu, just create a directory named "menu" inside res
-        MaterialMenuInflater.with(this).inflate(R.menu.note_edit_menu, menu);
+        getMenuInflater().inflate(R.menu.note_edit_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -150,10 +151,10 @@ public class NoteEditActivity extends AppCompatActivity {
             if( !this.isSaved )
                 saveAction(true);
         }else if( id == R.id.syncButton ){
-            if( this.isSaved )
+            if( this.noteId != null && !this.noteId.isEmpty() )
                 syncAction(true);
             else
-                Toast.makeText(NoteEditActivity.this, "This note haven't been saved yet.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NoteEditActivity.this, "This note haven't been saved before.", Toast.LENGTH_SHORT).show();
         }else if( id == android.R.id.home ){
             this.onBackPressed();
             return true;
@@ -162,16 +163,51 @@ public class NoteEditActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onVersionChangeConfirmation(Note note, boolean verbose){
+        this.isSaved = false;
+        new AlertDialog.Builder(this)
+                .setIcon(R.drawable.ic_round_warning_24)
+                .setTitle("Overwrite Note?")
+                .setMessage("Are you sure you want to overwrite this note?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        replaceNoteEditor(note);
+                        if( verbose ) Toast.makeText(NoteEditActivity.this, "Sync Success!", Toast.LENGTH_SHORT).show();
+                    }
+
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        conflictWarningText.setVisibility(View.VISIBLE);
+                        if( verbose ) Toast.makeText(NoteEditActivity.this, "Sync Cancelled!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
+    }
+
+    public void replaceNoteEditor(Note note){
+        if( note != null ){
+            String newTitle = note.getTitle();
+            String newContent = note.getContent();
+            String newUpdatedAt = note.getUpdatedAt();
+            this.titleInput.setText(newTitle);
+            this.contentInput.setText(newContent);
+            this.noteUpdatedAt.setText(convertDate(newUpdatedAt));
+            this.conflictWarningText.setVisibility(View.GONE);
+            this.isSaved = true;
+        }
+    }
+
     public void syncAction(boolean verbose){
         listMenuRefresh.setRefreshing(true);
-        EditText titleInput = findViewById(R.id.inputTitle);
-        EditText contentInput = findViewById(R.id.inputContent);
-        TextView noteUpdatedAt = findViewById(R.id.noteUpdatedAt);
 
         String token = sessionManager.getToken();
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-        if( this.isSaved ){
+        if( this.noteId != null && !this.noteId.isEmpty() ){
             try {
                 Call<EditNote> showNoteCall = apiInterface.showNote(token, this.noteId);
                 showNoteCall.enqueue(new Callback<EditNote>() {
@@ -180,15 +216,21 @@ public class NoteEditActivity extends AppCompatActivity {
                         if(response.body() != null && response.isSuccessful() ){
                             Note curNote = response.body().getData();
                             if( curNote != null ){
-                                String newTitle = curNote.getTitle();
-                                String newContent = curNote.getContent();
-                                String newUpdatedAt = curNote.getUpdatedAt();
-                                titleInput.setText(newTitle);
-                                contentInput.setText(newContent);
-                                noteUpdatedAt.setText(convertDate(newUpdatedAt));
-
-                                if( verbose ) Toast.makeText(NoteEditActivity.this, "Sync Success!", Toast.LENGTH_SHORT).show();
-                                NoteEditActivity.this.isSaved = true;
+                                String serverTitle = curNote.getTitle();
+                                String serverContent = curNote.getContent();
+                                String localTitle = titleInput.getText().toString();
+                                String localContent = contentInput.getText().toString();
+                                if( !serverTitle.equals(localTitle) || !serverContent.equals(localContent) ){
+                                    if( verbose )
+                                        onVersionChangeConfirmation(curNote, verbose);
+                                    else{
+                                        // TODO: Complex autosave
+                                    }
+                                }else{
+                                    replaceNoteEditor(curNote);
+                                    NoteEditActivity.this.isSaved = true;
+                                    if( verbose ) Toast.makeText(NoteEditActivity.this, "Sync Success!", Toast.LENGTH_SHORT).show();
+                                }
                             }else{
                                 if( verbose ) Toast.makeText(NoteEditActivity.this, "Sync Went Wrong!", Toast.LENGTH_SHORT).show();
                             }
@@ -211,6 +253,7 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
     public void saveAction(boolean verbose){
+        this.conflictWarningText.setVisibility(View.GONE);
         listMenuRefresh.setRefreshing(true);
         EditText titleInput = findViewById(R.id.inputTitle);
         EditText contentInput = findViewById(R.id.inputContent);
@@ -346,14 +389,8 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
     public void onDeleteConfirmation(){
-        Drawable icon = MaterialDrawableBuilder.with(this) // provide a context
-                .setIcon(MaterialDrawableBuilder.IconValue.ALERT) // provide an icon
-                .setColor(Color.red(1)) // set the icon color
-                .setToActionbarSize() // set the icon size
-                .build();
-
         new AlertDialog.Builder(this)
-                .setIcon(icon)
+                .setIcon(R.drawable.ic_round_warning_24)
                 .setTitle("Delete Note")
                 .setMessage("Are you sure you want to delete this note?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()

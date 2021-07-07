@@ -20,12 +20,7 @@ import com.example.moopnotes.model.GetNoteList;
 import com.example.moopnotes.model.Note;
 import com.example.moopnotes.rest.ApiClient;
 import com.example.moopnotes.rest.ApiInterface;
-import com.google.gson.JsonObject;
 
-import net.steamcrafted.materialiconlib.MaterialMenuInflater;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;

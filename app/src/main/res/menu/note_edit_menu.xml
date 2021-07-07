@@ -3,30 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/saveButton"
-        android:title="SAVE"
+        android:title="save"
         app:showAsAction="always"
-        app:materialIcon="content_save"
-        app:materialIconSize="24dp"
-        app:materialIconColor="#fff"
-        android:tint="@color/white"
+        android:iconTint="@color/white"
+        android:icon="@drawable/ic_baseline_save_24"
         />
     <item
         android:id="@+id/syncButton"
-        android:title="SYNC"
+        android:title="sync"
         app:showAsAction="always"
-        app:materialIcon="sync"
-        app:materialIconSize="24dp"
-        app:materialIconColor="#fff"
-        app:iconTint="#ffffff"
-        app:iconTintMode="multiply"
+        android:iconTint="@color/white"
+        android:icon="@drawable/ic_baseline_sync_24"
         />
     <item
         android:id="@+id/deleteButton"
-        android:title="DELETE"
+        android:title="delete"
         app:showAsAction="always"
-        app:materialIcon="delete"
-        app:materialIconSize="24dp"
-        app:materialIconColor="#fff"
-        android:tint="@color/white"
+        android:iconTint="@color/white"
+        android:icon="@drawable/ic_baseline_delete_forever_24"
         />
 </menu>
