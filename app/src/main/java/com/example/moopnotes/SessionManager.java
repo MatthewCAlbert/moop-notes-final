@@ -19,7 +19,6 @@ import retrofit2.Response;
 public class SessionManager {
 
     ApiInterface apiInterface;
-    private boolean valid;
 
     private Context _context;
     private SharedPreferences sharedPreferences;
@@ -30,12 +29,15 @@ public class SessionManager {
     public static final String USERNAME = "username";
     public static final String CREATED_AT = "createdAt";
     public static final String TOKEN = "user_token";
+    public static final String VALIDITY = "tokenValidity";
 
     public SessionManager (Context context){
         this._context = context;
-        this.valid = true;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         editor = sharedPreferences.edit();
+
+        if( this.isLoggedIn() )
+            this.checkTokenValidity();
     }
 
     public boolean checkTokenValidity(){
@@ -49,9 +51,9 @@ public class SessionManager {
             public void onResponse(Call<AuthCheck> call, Response<AuthCheck> response) {
                 if(response.body() != null  ) {
                     if(response.isSuccessful() && response.body().isSuccess()){
-                        SessionManager.this.setValid(true);
+                        editor.putBoolean(VALIDITY, true);
                     }else{
-                        SessionManager.this.setValid(false);
+                        editor.putBoolean(VALIDITY, false);
                     }
                 }
             }
@@ -71,6 +73,7 @@ public class SessionManager {
         editor.putString(USERNAME, user.getUsername());
         editor.putString(TOKEN, user.getToken());
         editor.putString(CREATED_AT, user.getCreatedAt());
+        editor.putBoolean(VALIDITY, true);
         editor.commit();
     }
 
@@ -96,10 +99,10 @@ public class SessionManager {
     }
 
     public boolean isValid() {
-        return valid;
+        return sharedPreferences.getBoolean(VALIDITY,true);
     }
 
     public void setValid(boolean valid) {
-        this.valid = valid;
+        editor.putBoolean(VALIDITY, valid);
     }
 }

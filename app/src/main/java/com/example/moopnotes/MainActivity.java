@@ -24,6 +24,13 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }else{
             // Go To Notes
+            if( !sessionManager.isValid() ){
+                // Invalid Token, ask for login again
+                sessionManager.logoutSession();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                return;
+            }
             Intent intent = new Intent(this, NoteListActivity.class);
             startActivity(intent);
             finish();
