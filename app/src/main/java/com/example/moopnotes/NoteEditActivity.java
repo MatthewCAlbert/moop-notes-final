@@ -3,6 +3,7 @@ package com.example.moopnotes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,6 +41,7 @@ public class NoteEditActivity extends AppCompatActivity {
     private String noteId = "";
     private boolean autoSave = false;
     private boolean isSaved = true;
+    private SwipeRefreshLayout listMenuRefresh;
     ApiInterface apiInterface;
     SessionManager sessionManager;
 
@@ -60,7 +62,7 @@ public class NoteEditActivity extends AppCompatActivity {
         String content = intent.getStringExtra("content");
         String updatedAt = intent.getStringExtra("updatedAt");
 
-        updatedAt = updatedAt != null ? updatedAt : "never";
+        updatedAt = updatedAt != null ? convertDate(updatedAt) : "never";
 
         titleInput.setText(title);
         contentInput.setText(content);
@@ -113,6 +115,9 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
+        listMenuRefresh = findViewById(R.id.refreshList);
+        listMenuRefresh.setEnabled(false);
+
     }
 
     @Override
@@ -158,6 +163,7 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
     public void syncAction(boolean verbose){
+        listMenuRefresh.setRefreshing(true);
         EditText titleInput = findViewById(R.id.inputTitle);
         EditText contentInput = findViewById(R.id.inputContent);
         TextView noteUpdatedAt = findViewById(R.id.noteUpdatedAt);
@@ -189,19 +195,23 @@ public class NoteEditActivity extends AppCompatActivity {
                         }else{
                             if( verbose ) Toast.makeText(NoteEditActivity.this, "Sync Failed!", Toast.LENGTH_SHORT).show();
                         }
+                        listMenuRefresh.setRefreshing(false);
                     }
                     @Override
                     public void onFailure(Call<EditNote> call, Throwable t) {
                         if( verbose ) Toast.makeText(NoteEditActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        listMenuRefresh.setRefreshing(false);
                     }
                 });
             } catch (JsonIOException e) {
                 e.printStackTrace();
+                listMenuRefresh.setRefreshing(false);
             }
         }
     }
 
     public void saveAction(boolean verbose){
+        listMenuRefresh.setRefreshing(true);
         EditText titleInput = findViewById(R.id.inputTitle);
         EditText contentInput = findViewById(R.id.inputContent);
         TextView noteUpdatedAt = findViewById(R.id.noteUpdatedAt);
@@ -244,14 +254,17 @@ public class NoteEditActivity extends AppCompatActivity {
                         }else{
                             if( verbose ) Toast.makeText(NoteEditActivity.this, "Saving New Note Failed!", Toast.LENGTH_SHORT).show();
                         }
+                        listMenuRefresh.setRefreshing(false);
                     }
                     @Override
                     public void onFailure(Call<EditNote> call, Throwable t) {
                         if( verbose ) Toast.makeText(NoteEditActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        listMenuRefresh.setRefreshing(false);
                     }
                 });
             } catch (JsonIOException e) {
                 e.printStackTrace();
+                listMenuRefresh.setRefreshing(false);
             }
 
         }else{
@@ -269,26 +282,31 @@ public class NoteEditActivity extends AppCompatActivity {
 
                                 if( verbose ) Toast.makeText(NoteEditActivity.this, "Save Success!", Toast.LENGTH_SHORT).show();
                                 NoteEditActivity.this.isSaved = true;
+                                syncAction(false);
                             }else{
                                 if( verbose ) Toast.makeText(NoteEditActivity.this, "Save Went Wrong!", Toast.LENGTH_SHORT).show();
                             }
                         }else{
                             if( verbose ) Toast.makeText(NoteEditActivity.this, "Save Failed!", Toast.LENGTH_SHORT).show();
                         }
+                        listMenuRefresh.setRefreshing(false);
                     }
                     @Override
                     public void onFailure(Call<EditNote> call, Throwable t) {
                         if( verbose ) Toast.makeText(NoteEditActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        listMenuRefresh.setRefreshing(false);
                     }
                 });
             } catch (JsonIOException e) {
                 e.printStackTrace();
+                listMenuRefresh.setRefreshing(false);
             }
 
         }
     }
 
     public void deleteAction(){
+        listMenuRefresh.setRefreshing(true);
         System.out.println("deleted");
 
         if( this.noteId == null || this.noteId.isEmpty() ){
@@ -322,6 +340,7 @@ public class NoteEditActivity extends AppCompatActivity {
             });
         } catch (JsonIOException e) {
             e.printStackTrace();
+            listMenuRefresh.setRefreshing(false);
         }
 
     }

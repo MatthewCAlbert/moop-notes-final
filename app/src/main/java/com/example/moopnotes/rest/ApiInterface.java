@@ -34,7 +34,7 @@ public interface ApiInterface {
     @GET("auth/check")
     Call<AuthCheck> checkAuth(@Header("Authorization") String auth);
 
-    @PUT("user/change-password")
+    @PUT("users/change-password")
     @Headers({"Content-Type: application/json"})
     Call<Login> changePassword(@Header("Authorization") String auth, @Body JsonObject body);
 

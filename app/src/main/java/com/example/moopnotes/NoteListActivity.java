@@ -3,6 +3,7 @@ package com.example.moopnotes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.google.gson.JsonObject;
 
 import net.steamcrafted.materialiconlib.MaterialMenuInflater;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,6 +40,7 @@ public class NoteListActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout listMenuRefresh;
     public static NoteListActivity ma;
 
     @Override
@@ -53,6 +57,15 @@ public class NoteListActivity extends AppCompatActivity {
                 Intent intent = new Intent(NoteListActivity.this, NoteEditActivity.class);
                 intent.putExtra("noteId", "");
                 startActivity(intent);
+            }
+        });
+
+        listMenuRefresh = findViewById(R.id.refreshList);
+        listMenuRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Load data to your RecyclerView
+                refresh();
             }
         });
 
@@ -102,6 +115,7 @@ public class NoteListActivity extends AppCompatActivity {
 
 
     public void refresh() {
+        listMenuRefresh.setRefreshing(true);
         Call<GetNoteList> noteListCall = mApiInterface.allNote(sessionManager.getToken());
         noteListCall.enqueue(new Callback<GetNoteList>() {
             @Override
@@ -130,6 +144,7 @@ public class NoteListActivity extends AppCompatActivity {
                     emptyView.setText("Fetch Failed");
                     emptyView.setVisibility(View.VISIBLE);
                 }
+                listMenuRefresh.setRefreshing(false);
             }
 
             @Override
@@ -139,6 +154,7 @@ public class NoteListActivity extends AppCompatActivity {
                 mRecyclerView.setVisibility(View.GONE);
                 emptyView.setText("Fetch Error");
                 emptyView.setVisibility(View.VISIBLE);
+                listMenuRefresh.setRefreshing(false);
             }
         });
     }

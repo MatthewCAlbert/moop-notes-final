@@ -8,7 +8,7 @@
         app:materialIcon="content_save"
         app:materialIconSize="24dp"
         app:materialIconColor="#fff"
-        android:background="@android:color/darker_gray"
+        android:tint="@color/white"
         />
     <item
         android:id="@+id/syncButton"
@@ -17,7 +17,8 @@
         app:materialIcon="sync"
         app:materialIconSize="24dp"
         app:materialIconColor="#fff"
-        android:background="@android:color/darker_gray"
+        app:iconTint="#ffffff"
+        app:iconTintMode="multiply"
         />
     <item
         android:id="@+id/deleteButton"
@@ -26,6 +27,6 @@
         app:materialIcon="delete"
         app:materialIconSize="24dp"
         app:materialIconColor="#fff"
-        android:background="@android:color/darker_gray"
+        android:tint="@color/white"
         />
 </menu>

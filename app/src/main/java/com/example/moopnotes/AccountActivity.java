@@ -24,6 +24,8 @@ import com.example.moopnotes.rest.ApiInterface;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -47,7 +49,7 @@ public class AccountActivity extends AppCompatActivity {
         TextView createdAtText = findViewById(R.id.createdAtText);
 
         usernameText.setText(userDetail.get(sessionManager.USERNAME));
-        createdAtText.setText(userDetail.get(sessionManager.CREATED_AT));
+        createdAtText.setText(convertDate(userDetail.get(sessionManager.CREATED_AT)));
 
         // calling the action bar
         ActionBar actionBar = getSupportActionBar();
@@ -140,4 +142,16 @@ public class AccountActivity extends AppCompatActivity {
         setButtonStatus(true);
     }
 
+    private String convertDate(String src){
+        try{
+            SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:sss");
+            Date dt = input.parse(src);
+            SimpleDateFormat output = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String formattedDate = output.format(dt);
+            return formattedDate;
+        }catch(Exception e){
+
+        }
+        return src;
+    }
 }

@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
     public static final String BASE_URL = "https://moop.hexalogi.cyou/api/v1/";
     private static Retrofit retrofit = null;
-    private static boolean logRequest = true;
+    private static boolean logRequest = false;
 
     public static Retrofit getClient() {
 
