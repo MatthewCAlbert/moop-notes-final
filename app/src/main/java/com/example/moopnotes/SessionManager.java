@@ -36,11 +36,12 @@ public class SessionManager {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         editor = sharedPreferences.edit();
 
+        // Check for Validity
         if( this.isLoggedIn() )
             this.checkTokenValidity();
     }
 
-    public boolean checkTokenValidity(){
+    public void checkTokenValidity(){
         String token = getToken();
 
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
@@ -63,8 +64,6 @@ public class SessionManager {
 
             }
         });
-
-        return isValid();
     }
 
     public void createLoginSession(LoginData user){
